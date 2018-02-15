@@ -1,79 +1,64 @@
 #include <stdio.h>
+#include <string.h>
 
 #define MIN(X,Y) ((X) < (Y) ? (X) : (Y))
 
 int check_and_update( int old, int new )
 {
-	int val = 0;
-
+	printf( "old : %d | new : %d \n", old, new );
 	if ( old == 0 )
 	{
-		val = new;
-		return val;
+		return new;
 	}
 
-	val = MIN( old, new );
-	return val;
-
+	return MIN( old, new );
 }
 
 int main ( int argc, char* argv[] )
 {
 	int req_kg = 0;
-	int div_by_3 = 0;
-	int div_by_5 = 0;
-	int div_by_6 = 0;
-	int div_by_10 = 0;
-	int res = 0;
+	int bag_cnt = 0;
 
-	scanf( "%d", &req_kg );
-	//req_kg = *argv[2];
+	//scanf( "%d", &req_kg );
+	req_kg = atoi(argv[1]);
 
-	printf ( "%d \n", req_kg );
+//	printf("%d\n", req_kg);
 
-	if ( req_kg%3 == 0 )
+	if ( req_kg % 3 == 0 )
 	{
-		res = req_kg/3;
-		printf ( "res 1 : %d \n", res );
+		printf("#1 \n");
+		bag_cnt = check_and_update( bag_cnt, (req_kg / 3) );
 	}
-	if ( req_kg%5 == 0 )
+	else if ( req_kg % 3 == 2 )
 	{
-		res = check_and_update( res, req_kg/5 );
-		printf ( "res 2 : %d \n", res );
+		printf("#2 \n");
+		bag_cnt = check_and_update( bag_cnt, ((req_kg / 3) - 1) + ((req_kg+3%3) / 5) );
 	}
 
-	div_by_3 = req_kg%3;
-	div_by_5 = req_kg%5;
-	div_by_6 = req_kg%6;
-	div_by_10 = req_kg%10;
-
-	if ( div_by_3%5 == 0 )
+	if ( req_kg % 5 == 0 )
 	{
-		res = check_and_update( res, ((req_kg - div_by_3)/3 + div_by_3/5) );
-		printf ( "res 3 : %d \n", res );
+		printf("#3 \n");
+		bag_cnt = check_and_update( bag_cnt, (req_kg / 5) );
 	}
-	if ( div_by_5%3 == 0 )
+	else if ( req_kg % 5 == 3 )
 	{
-		res = check_and_update( res, ((req_kg - div_by_5)/5 + div_by_5/3) );
-		printf ( "res 4 : %d \n", res );
+		printf("#4 \n");
+		bag_cnt = check_and_update( bag_cnt, ((req_kg / 5) + ((req_kg % 5) / 3)) );
+		printf( "Cnt : %d \n", bag_cnt );
 	}
-	if ( div_by_6 != 1 && div_by_3 != 0 && req_kg > 6 )
+	else if ( req_kg > 10)
 	{
-		printf ( "omg %d \n", div_by_6 );
-		if ( div_by_6%5 == 0)
-		{
-			res = (check_and_update( res, ((req_kg - div_by_6)/6 + div_by_6/5) )) + 1;
-			printf ( "res 5 : %d \n", res );
-		}
+		printf("#5 \n");
+		bag_cnt = check_and_update( bag_cnt, ((req_kg / 5) - 1) + ((req_kg+5 % 5) / 3) );
+		printf( "Cnt : %d \n", bag_cnt );
 	}
 
-
-	if ( res == 0 )
+	if ( bag_cnt > 0 )
 	{
-		printf ( "-1 \n" );
-		return 0;
+		printf( "Cnt : %d \n", bag_cnt );
+		return bag_cnt;
 	}
 
-	printf ( "%d \n", res );
-	return 0;
+	printf("-1 \n");
+	return -1;
 }
