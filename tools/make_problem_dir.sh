@@ -1,4 +1,4 @@
-REPO_NAME="study_fuck"
+REPO_NAME="study_algorithm"
 ROOT_DIR=$(find / -name "$REPO_NAME")
 MAKE_FILE="C_sample_makefile"
 
