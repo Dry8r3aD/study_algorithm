@@ -1,94 +1,70 @@
 #include <stdio.h>
 #include <stdbool.h>
+#include <string.h>
 
-#define	MAX_NUMBER_LENGTH	7
-#define	MAX_DIGIT_COUNT		10
-#define ASCII_CONVERTOR		48
+#define DBG_MODE				1
+
+#define MAX_ROOM_NUMBER_LENGTH	7
+#define	ASCII_PADDING			48
+
+void add_set_to_status( int *arr )
+{
+	for ( int i = 0; i < 10; i++ )
+		arr[i]++;
+}
+
+#ifdef DBG_MODE
+void print_digit_status( int *arr )
+{
+	printf("[STATUS] ");
+	for ( int i = 0; i < 10; i++ )
+	{
+		printf( "%d ", arr[i] );
+	}
+	printf( "\n" );
+}
+#endif
 
 int main ( void )
 {
-	char room_number[ MAX_NUMBER_LENGTH + 1] = { 0, };	// MAX = 1,000,000
-	bool digit_use_checker[ MAX_DIGIT_COUNT ] = { false, };
-	int use_6_or_9 = false;
-	int number_set_cnt = 0;
+	char room_number[MAX_ROOM_NUMBER_LENGTH + 1] = { -1, };
+	int digit_status[10] = { 0, }; // 0 ~ 9
+	int used_set_cnt = 0;
+	bool is_6_or_9 = false;
 
-	scanf( "%s",room_number );
+	scanf( "%s", room_number );
 
-	for ( int i = 0; i < MAX_NUMBER_LENGTH; i++ )
+	used_set_cnt++;
+	add_set_to_status( digit_status );
+
+	// i : room_number의 번째 idx
+	for ( int i = 0; i < strlen(room_number); i++ )
 	{
-		int room_number_int = room_number[i] - ASCII_CONVERTOR;
+		is_6_or_9 = (room_number[i] - ASCII_PADDING == 6 || room_number[i] - ASCII_PADDING == 9) ? true : false;
 
-		if ( room_number[i] == '\0' )
+		// what is room #? 0 ~ 9
+		for ( int j = 0; j < 10; j++ )
 		{
-			break;
-		}
-
-		if ( i == 0 )
-		{
-			digit_use_checker[ room_number_int] = true;
-			number_set_cnt++;
-
-			continue;
-		}
-
-		// Starts with i == 1
-		if ( room_number_int == 6 || room_number_int == 9 )
-		{
-
-		}
-		else	// Other then 6 or 9
-		{
-			if ( digit_use_checker[ room_number_int ] != false )
+			if ( room_number[i] - ASCII_PADDING == j )
 			{
-				number_set_cnt++;
-				memset( digit_use_checker, 0x00, sizeof(bool) * MAX_DIGIT_COUNT );
-				continue;
+				if ( !is_6_or_9 && digit_status[j] <= 0 )
+				{
+					add_set_to_status( digit_status );
+					used_set_cnt++;
+				}
+				else if ( is_6_or_9 && digit_status[6] + digit_status[9] <= 0 )
+				{
+					add_set_to_status( digit_status );
+					used_set_cnt++;
+				}
+
+				digit_status[j]--;
+				break;
 			}
-
-			digit_use_checker[ room_number_int ] == true;
 		}
-
-#if 0
-		if ( i == 0 )
-		{
-			if ( room_number_int == 6 || room_number_int == 9 )
-			{
-				use_6_or_9++;
-			}
-
-			digit_use_checker[ room_number_int ] = true;
-			number_set_cnt++;
-			continue;
-		}
-
-		if ( room_number_int != 6 && room_number_int != 9 )
-		{
-			if ( digit_use_checker[ room_number_int ] == true )
-			{
-				number_set_cnt++;
-				use_6_or_9 = 0;
-				continue;
-			}
-
-			digit_use_checker[ room_number_int ] = true;
-
-			continue;
-		}
-
-		if ( use_6_or_9 >= 2 )
-		{
-			number_set_cnt++;
-			use_6_or_9 = 0;
-			continue;
-		}
-
-		// From here, 6 or 9, and can use one more digit
-		use_6_or_9++;
-		continue;
-#endif
 	}
 
-	printf( "%d\n", number_set_cnt );
+	printf("%d\n", used_set_cnt );
 
 	return 0;
 }
